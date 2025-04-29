@@ -13,42 +13,49 @@ namespace WebApp.Api.Controllers
     public class CustomerController(ApplicationDbContext context) : ControllerBase
     {
         // GET: api/<EmployeeController>
-        [HttpGet]
-        public async Task<IEnumerable<Customer>> Get()
+        [HttpGet("GetAllCustomer")]
+        public async Task<IActionResult> GetAllCustomer()
         {
-            return await context.Customer.ToListAsync();
+            return Ok(await context.Customer.ToListAsync());
         }
 
         // GET api/<EmployeeController>/5
-        [HttpGet("{id}")]
-        public async Task<Customer> Get(int id)
+        [HttpGet("GetEmployeeById")]
+        public async Task<IActionResult> GetEmployeeById(int id)
         {
-            return await context.Customer.FindAsync(id);
+            return Ok(await context.Customer.FindAsync(id));
         }
 
         // POST api/<EmployeeController>
-        [HttpPost]
-        public async Task Post([FromBody] Customer customer)
+        [HttpPost("AddEmployee")]
+        public async Task<IActionResult> AddEmployee([FromBody] Customer customer)
         {
             context.Customer.Add(customer);
             await context.SaveChangesAsync();
+            return Ok();
         }
 
         // PUT api/<EmployeeController>/5
-        [HttpPut("{id}")]
-        public async Task Put(int id, [FromBody] Customer customer)
+        [HttpPut("UpdateEmployee")]
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] Customer customer)
         {
+            if (customer == null)
+            {
+                return BadRequest("No Content for the request");
+            }
             context.Customer.Update(customer);
             await context.SaveChangesAsync();
+            return Ok();
         }
 
         // DELETE api/<EmployeeController>/5
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        [HttpDelete("DeleteEmployee")]
+        public async Task<IActionResult> DeleteEmployee(int id)
         {
             var custom = context.Customer.Find(id);
             context.Customer.Remove(custom);
             await context.SaveChangesAsync();
+            return Ok();
         }
     }
 }
