@@ -21,27 +21,34 @@ namespace WebApp.Api.Controllers
 
         // GET api/<EmployeeController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<Customer> Get(int id)
         {
-            return "value";
+            return await context.Customer.FindAsync(id);
         }
 
         // POST api/<EmployeeController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task Post([FromBody] Customer customer)
         {
+            context.Customer.Add(customer);
+            await context.SaveChangesAsync();
         }
 
         // PUT api/<EmployeeController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task Put(int id, [FromBody] Customer customer)
         {
+            context.Customer.Update(customer);
+            await context.SaveChangesAsync();
         }
 
         // DELETE api/<EmployeeController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
+            var custom = context.Customer.Find(id);
+            context.Customer.Remove(custom);
+            await context.SaveChangesAsync();
         }
     }
 }
