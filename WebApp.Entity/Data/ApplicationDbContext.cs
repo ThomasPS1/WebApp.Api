@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +12,12 @@ namespace WebApp.Entity.Data
 {
     public class ApplicationDbContext : DbContext
     {
+       
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
         public DbSet<Customer> Customer { get; set; }
+        public DbSet<Order> Order { get; set; }
     }
 }

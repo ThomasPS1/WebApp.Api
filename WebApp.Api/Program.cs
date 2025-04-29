@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApp.Entity.Data;
+using WebApp.Services.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
