@@ -18,7 +18,7 @@ namespace WebApp.Entity.Models
         public long? contactNO { get; set; }
         public string? location { get; set; }
 
-        //public List<Order>? Orders { get; set; }
+        public List<Order>? Orders { get; set; }
 
     }
 }

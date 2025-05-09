@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using WebApp.Api.Controllers;
 using WebApp.Entity.Data;
+using WebApp.Entity.Dto;
 using WebApp.Entity.Models;
 using WebApp.Services.Repository;
 
@@ -13,33 +15,46 @@ namespace WebApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController(ICustomerRepository repository) : ControllerBase
+    public class CustomerController(ICustomerRepository repository,ILogger<CustomerController> logger, IMemoryCache cache) : ControllerBase
     {
+        public const string CustomerCache = "CustomerCache";
         // GET: api/<EmployeeController>
         [HttpGet("GetAllCustomer")]
         public async Task<IActionResult> GetAllCustomer()
         {
-            return Ok(await repository.GetAllCustomerAsync());
+            logger.LogInformation("Entered on GetAllCustomer");
+            if (!cache.TryGetValue(CustomerCache, out List<CustomerResponseDto> customerData))
+            {
+                customerData = await repository.GetAllCustomerAsync();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+
+                cache.Set(CustomerCache, customerData, cacheEntryOptions);
+            }
+            return Ok(customerData);
+
         }
 
         // GET api/<EmployeeController>/5
-        [HttpGet("GetEmployeeById")]
-        public async Task<IActionResult> GetEmployeeById(int id)
+        [HttpGet("GetCustomerById")]
+        public async Task<IActionResult> GetCustomerById(int id)
         {
             return Ok(await repository.GetCustomerByIdAsync(id));
         }
 
         // POST api/<EmployeeController>
-        [HttpPost("AddEmployee")]
-        public async Task<IActionResult> AddEmployee([FromBody] Customer customer)
+        [HttpPost("AddCustomer")]
+        public async Task<IActionResult> AddCustomer([FromBody] Customer customer)
         {
             await repository.AddCustomerAsync(customer);
             return Ok();
         }
 
         // PUT api/<EmployeeController>/5
-        [HttpPut("UpdateEmployee")]
-        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] Customer customer)
+        [HttpPut("UpdateCustomer")]
+        public async Task<IActionResult>UpdateCustomer(int id, [FromBody] Customer customer)
         {
             if (customer == null)
             {
@@ -50,8 +65,8 @@ namespace WebApp.Api.Controllers
         }
 
         // DELETE api/<EmployeeController>/5
-        [HttpDelete("DeleteEmployee")]
-        public async Task<IActionResult> DeleteEmployee(int id)
+        [HttpDelete("DeleteCustomer")]
+        public async Task<IActionResult> DeleteCustomer(int id)
         {
             await repository.DeleteCustomerAsync(id);
             return Ok();

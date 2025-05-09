@@ -14,14 +14,14 @@ namespace WebApp.Entity.Models
     {
         [Key]
         public int OrderId { get; set; }
-        public string ProductName { get; set; }
+        public string? ProductName { get; set; }
         public  int Qty { get; set; }
         public int UnitPrice { get; set; }
         public int TotalPrice { get; set; }
-        
+
         public int CustomerId { get; set; }
-        //[ForeignKey("CustomerId")]
-        //public Customer Customer { get; set; }
+        [ForeignKey("customerId")]
+        public Customer? Customer { get; set; }
 
     }
 }
